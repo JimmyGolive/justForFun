@@ -3,8 +3,8 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 const INITIAL_STATE = {
   // Onboarding
   isOnboarded: false,
-  partner1: { name: '', emoji: '🌸', color: '#ff6b9d' },
-  partner2: { name: '', emoji: '🔥', color: '#ff8c42' },
+  partner1: { name: '', emoji: '🌸' },
+  partner2: { name: '', emoji: '🔥' },
   activeUser: 'partner1', // who is currently viewing
 
   // Signals inbox
@@ -28,7 +28,7 @@ const ACHIEVEMENTS_DEF = [
   { id: 'streak_7',    label: 'Week Warmth 🌈', desc: '7-day connection streak',    condition: (s) => s.streak >= 7 },
   { id: 'points_50',   label: 'Spark Collector ✨', desc: 'Earn 50 points',         condition: (s) => s.points >= 50 },
   { id: 'points_200',  label: 'Flame Keeper 💎', desc: 'Earn 200 points',           condition: (s) => s.points >= 200 },
-  { id: 'historian',   label: 'Memory Maker 📸', desc: '10 connections total',      condition: (s) => s.signalHistory.filter(h => h.status === 'accepted').length >= 10 },
+  { id: 'historian',   label: 'Memory Maker 📸', desc: '10 connections total',      condition: (s) => s.signalHistory.filter(h => h.status === 'accept').length >= 10 },
 ];
 
 function checkAchievements(state) {
