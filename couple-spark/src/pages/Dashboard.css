@@ -1,0 +1,296 @@
+.dashboard {
+  padding: 16px 16px 100px;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Header / Switcher */
+.dash-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 12px 0;
+  background: #0f0f1a;
+}
+
+.partner-switcher {
+  display: flex;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.partner-tab {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 11px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.partner-tab.active {
+  background: linear-gradient(135deg, #ff6b9d, #ff8c42);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(255, 107, 157, 0.35);
+}
+
+/* Stats */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 16px 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-card.flame { border-color: rgba(255, 140, 66, 0.3); }
+.stat-card.spark { border-color: rgba(255, 215, 0, 0.3); }
+.stat-card.heart { border-color: rgba(255, 107, 157, 0.3); }
+
+.stat-icon { font-size: 1.4rem; }
+.stat-value { font-size: 1.8rem; font-weight: 800; color: #fff; }
+.stat-label { font-size: 0.72rem; color: rgba(255,255,255,0.45); letter-spacing: 0.02em; }
+
+/* Progress */
+.progress-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 14px 16px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b9d, #ff8c42);
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+/* Mood */
+.mood-section {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.mood-section h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.8);
+  margin: 0 0 12px;
+}
+
+.partner-name {
+  color: rgba(255,255,255,0.45);
+  font-weight: 400;
+}
+
+.mood-row {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.mood-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.6);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mood-btn:first-child { font-size: 1.3rem; }
+.mood-btn span:first-child { font-size: 1.4rem; }
+
+.mood-btn.selected {
+  border-color: #ff6b9d;
+  background: rgba(255,107,157,0.2);
+  color: #fff;
+}
+
+.mood-btn:hover:not(.selected) {
+  background: rgba(255,255,255,0.1);
+}
+
+/* Action buttons */
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.action-row .action-btn:only-child {
+  grid-column: 1 / -1;
+}
+
+.action-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 22px 16px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.signal-btn {
+  background: linear-gradient(135deg, #ff6b9d, #e84393);
+  box-shadow: 0 6px 24px rgba(255, 107, 157, 0.4);
+}
+
+.inbox-btn {
+  background: linear-gradient(135deg, #7b2ff7, #5b0edb);
+  box-shadow: 0 6px 24px rgba(123, 47, 247, 0.35);
+}
+
+.action-icon { font-size: 2rem; }
+.action-label { font-size: 1rem; font-weight: 700; color: #fff; }
+.action-sub { font-size: 0.78rem; color: rgba(255,255,255,0.7); }
+
+.badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff3b3b;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* Achievements */
+.achievements-section h3,
+.history-section h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  margin: 0 0 12px;
+}
+
+.achievements-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.achievement-chip {
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.achievement-chip.unlocked {
+  background: linear-gradient(135deg, rgba(255,107,157,0.25), rgba(255,140,66,0.25));
+  border: 1px solid rgba(255,107,157,0.5);
+  color: #fff;
+}
+
+.achievement-chip.locked {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.3);
+}
+
+/* History */
+.history-section { display: flex; flex-direction: column; gap: 8px; }
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.history-item.accept  { border-left: 3px solid #4caf50; }
+.history-item.schedule { border-left: 3px solid #2196f3; }
+.history-item.decline { border-left: 3px solid rgba(255,255,255,0.2); }
+
+.history-icon { font-size: 1.3rem; }
+
+.history-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-names { font-size: 0.9rem; color: rgba(255,255,255,0.75); }
+.history-type  { font-size: 0.78rem; color: rgba(255,255,255,0.4); }
+.history-time  { font-size: 0.75rem; color: rgba(255,255,255,0.35); }
+
+/* Rewards nav */
+.rewards-nav-btn {
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px dashed rgba(255,255,255,0.2);
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.rewards-nav-btn:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.35);
+}
