@@ -16,19 +16,22 @@ const INITIAL_STATE = {
   streak: 0,
   lastConnectionDate: null,
   achievements: [],
-  redeemedRewards: [],
+  redeemedRewards: {}, // { rewardId: count } — allows repeatable redemption
 
   // Mood tracking
   moods: {}, // { 'YYYY-MM-DD': { partner1: 3, partner2: 4 } }
 };
 
 const ACHIEVEMENTS_DEF = [
-  { id: 'first_spark', label: 'First Spark 🌟', desc: 'Send your very first signal', condition: (s) => s.signalHistory.length >= 1 },
-  { id: 'streak_3',    label: 'Three-Peat 🔥',  desc: '3-day connection streak',   condition: (s) => s.streak >= 3 },
-  { id: 'streak_7',    label: 'Week Warmth 🌈', desc: '7-day connection streak',    condition: (s) => s.streak >= 7 },
-  { id: 'points_50',   label: 'Spark Collector ✨', desc: 'Earn 50 points',         condition: (s) => s.points >= 50 },
-  { id: 'points_200',  label: 'Flame Keeper 💎', desc: 'Earn 200 points',           condition: (s) => s.points >= 200 },
-  { id: 'historian',   label: 'Memory Maker 📸', desc: '10 connections total',      condition: (s) => s.signalHistory.filter(h => h.status === 'accept').length >= 10 },
+  { id: 'first_spark',  label: 'First Spark 🌟',      desc: 'Send your very first signal',    condition: (s) => s.signalHistory.length >= 1 },
+  { id: 'first_redeem', label: 'Treat Time 🎉',        desc: 'Redeem your first reward',       condition: (s) => Object.values(s.redeemedRewards).reduce((a, b) => a + b, 0) >= 1 },
+  { id: 'streak_3',     label: 'Three-Peat 🔥',        desc: '3-day connection streak',        condition: (s) => s.streak >= 3 },
+  { id: 'streak_7',     label: 'Week Warmth 🌈',       desc: '7-day connection streak',        condition: (s) => s.streak >= 7 },
+  { id: 'streak_30',    label: 'Monthly Flame 💑',     desc: '30-day connection streak',       condition: (s) => s.streak >= 30 },
+  { id: 'points_50',    label: 'Spark Collector ✨',   desc: 'Earn 50 points',                 condition: (s) => s.points >= 50 },
+  { id: 'points_200',   label: 'Flame Keeper 💎',      desc: 'Earn 200 points',                condition: (s) => s.points >= 200 },
+  { id: 'historian',    label: 'Memory Maker 📸',      desc: '10 connections total',           condition: (s) => s.signalHistory.filter(h => h.status === 'accept').length >= 10 },
+  { id: 'mood_7',       label: 'Mood Tracker 😊',      desc: 'Record mood on 7 different days', condition: (s) => Object.keys(s.moods).length >= 7 },
 ];
 
 function checkAchievements(state) {
@@ -71,8 +74,11 @@ function reducer(state, action) {
       const accepted = action.response === 'accept';
       const today = new Date().toDateString();
       const lastDate = state.lastConnectionDate;
+      const isToday = lastDate && new Date(lastDate).toDateString() === today;
       const wasYesterday = lastDate && new Date(lastDate).toDateString() === new Date(Date.now() - 86400000).toDateString();
-      const newStreak = accepted ? (wasYesterday || !lastDate ? state.streak + 1 : 1) : state.streak;
+      const newStreak = accepted
+        ? (isToday ? state.streak : wasYesterday || !lastDate ? state.streak + 1 : 1)
+        : state.streak;
       const pointsEarned = accepted ? 10 + newStreak * 2 : 0;
       const historyEntry = {
         ...state.pendingSignal,
@@ -96,16 +102,23 @@ function reducer(state, action) {
       return { ...state, pendingSignal: null };
 
     case 'REDEEM_REWARD':
-      if (state.points < action.cost || state.redeemedRewards.includes(action.rewardId)) return state;
-      return {
-        ...state,
-        points: state.points - action.cost,
-        redeemedRewards: [...state.redeemedRewards, action.rewardId],
-      };
+      if (state.points < action.cost) return state;
+      {
+        const newState = {
+          ...state,
+          points: state.points - action.cost,
+          redeemedRewards: {
+            ...state.redeemedRewards,
+            [action.rewardId]: (state.redeemedRewards[action.rewardId] || 0) + 1,
+          },
+        };
+        newState.achievements = checkAchievements(newState);
+        return newState;
+      }
 
     case 'RECORD_MOOD': {
       const dateKey = new Date().toISOString().split('T')[0];
-      return {
+      const newState = {
         ...state,
         moods: {
           ...state.moods,
@@ -115,10 +128,23 @@ function reducer(state, action) {
           },
         },
       };
+      newState.achievements = checkAchievements(newState);
+      return newState;
     }
 
-    case 'LOAD_STATE':
-      return { ...INITIAL_STATE, ...action.payload };
+    case 'RESET_STATE':
+      return { ...INITIAL_STATE };
+
+    case 'LOAD_STATE': {
+      const payload = { ...action.payload };
+      // Migrate redeemedRewards from old array format to object format
+      if (Array.isArray(payload.redeemedRewards)) {
+        payload.redeemedRewards = Object.fromEntries(
+          payload.redeemedRewards.map((id) => [id, 1])
+        );
+      }
+      return { ...INITIAL_STATE, ...payload };
+    }
 
     default:
       return state;
@@ -131,7 +157,15 @@ export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE, (init) => {
     try {
       const saved = localStorage.getItem('coupleSpark');
-      return saved ? { ...init, ...JSON.parse(saved) } : init;
+      if (!saved) return init;
+      const parsed = JSON.parse(saved);
+      // Migrate redeemedRewards from old array format to object format
+      if (Array.isArray(parsed.redeemedRewards)) {
+        parsed.redeemedRewards = Object.fromEntries(
+          parsed.redeemedRewards.map((id) => [id, 1])
+        );
+      }
+      return { ...init, ...parsed };
     } catch {
       return init;
     }

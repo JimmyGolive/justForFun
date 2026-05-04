@@ -1,26 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { ACHIEVEMENTS_DEF } from '../context/AppContext';
+import { REWARDS } from '../constants';
 import './Rewards.css';
-
-const REWARDS = [
-  { id: 'r1', emoji: '🕯️', label: '浪漫燭光晚餐', cost: 50,  desc: '一起享用一頓安靜的燭光晚餐，關掉手機，只有彼此' },
-  { id: 'r2', emoji: '🛁', label: '泡澡 SPA 之夜', cost: 80,  desc: '為對方準備芳香泡澡，點好蠟燭，讓身心完全放鬆' },
-  { id: 'r3', emoji: '🎁', label: '驚喜小禮物',   cost: 100, desc: '送給對方一份精心準備的驚喜，不一定要貴重，重在心意' },
-  { id: 'r4', emoji: '💆', label: '全身按摩服務', cost: 120, desc: '為對方進行 30 分鐘全身按摩，完全由對方指定手法' },
-  { id: 'r5', emoji: '🏖️', label: '週末小旅行',   cost: 200, desc: '計劃一次說走就走的兩人小旅行，一起創造新回憶' },
-  { id: 'r6', emoji: '🍽️', label: '精心料理大餐', cost: 150, desc: '親手為對方做一頓心意滿滿的料理，可以是早午晚餐' },
-  { id: 'r7', emoji: '🎬', label: '電影約會之夜', cost: 60,  desc: '選一部對方喜歡的電影，備好零食，享受家庭電影院' },
-  { id: 'r8', emoji: '⭐', label: '終極願望卡',   cost: 300, desc: '一張無限制的願望卡，對方可以用來兌換任何想要的事' },
-];
 
 export default function Rewards({ onNavigate }) {
   const { state, dispatch } = useApp();
   const { points, redeemedRewards, achievements } = state;
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   function handleRedeem(reward) {
-    if (points < reward.cost || redeemedRewards.includes(reward.id)) return;
+    if (points < reward.cost) return;
     dispatch({ type: 'REDEEM_REWARD', rewardId: reward.id, cost: reward.cost });
+  }
+
+  function handleReset() {
+    dispatch({ type: 'RESET_STATE' });
+    setShowResetConfirm(false);
   }
 
   return (
@@ -36,17 +32,20 @@ export default function Rewards({ onNavigate }) {
       <h3 className="section-title">🎁 可兌換獎勵</h3>
       <div className="rewards-grid">
         {REWARDS.map((r) => {
-          const redeemed = redeemedRewards.includes(r.id);
+          const redeemCount = redeemedRewards[r.id] || 0;
           const canAfford = points >= r.cost;
           return (
-            <div key={r.id} className={`reward-card ${redeemed ? 'redeemed' : ''} ${!canAfford && !redeemed ? 'locked' : ''}`}>
-              <div className="reward-emoji">{redeemed ? '✅' : r.emoji}</div>
+            <div key={r.id} className={`reward-card ${!canAfford ? 'locked' : ''}`}>
+              <div className="reward-emoji">{r.emoji}</div>
               <div className="reward-info">
                 <span className="reward-label">{r.label}</span>
                 <span className="reward-desc">{r.desc}</span>
                 <div className="reward-footer">
                   <span className="reward-cost">{r.cost} pts</span>
-                  {!redeemed && (
+                  <div className="reward-footer-right">
+                    {redeemCount > 0 && (
+                      <span className="redeemed-count">已兌換 {redeemCount} 次</span>
+                    )}
                     <button
                       className={`redeem-btn ${canAfford ? 'can-afford' : 'cant-afford'}`}
                       onClick={() => handleRedeem(r)}
@@ -54,8 +53,7 @@ export default function Rewards({ onNavigate }) {
                     >
                       {canAfford ? '兌換' : `還差 ${r.cost - points}`}
                     </button>
-                  )}
-                  {redeemed && <span className="redeemed-badge">已兌換</span>}
+                  </div>
                 </div>
               </div>
             </div>
@@ -78,6 +76,22 @@ export default function Rewards({ onNavigate }) {
             </div>
           );
         })}
+      </div>
+
+      <div className="reset-section">
+        {!showResetConfirm ? (
+          <button className="reset-btn" onClick={() => setShowResetConfirm(true)}>
+            🔄 重置所有資料
+          </button>
+        ) : (
+          <div className="reset-confirm">
+            <p>確定要清除所有資料並重新開始嗎？</p>
+            <div className="reset-confirm-btns">
+              <button className="reset-confirm-yes" onClick={handleReset}>確定重置</button>
+              <button className="reset-confirm-no" onClick={() => setShowResetConfirm(false)}>取消</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

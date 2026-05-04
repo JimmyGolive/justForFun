@@ -73,15 +73,9 @@
   transition: all 0.2s;
 }
 
-.reward-card:hover:not(.redeemed):not(.locked) {
+.reward-card:hover:not(.locked) {
   background: rgba(255,255,255,0.09);
   border-color: rgba(255,107,157,0.3);
-}
-
-.reward-card.redeemed {
-  border-color: rgba(76,175,80,0.4);
-  background: rgba(76,175,80,0.08);
-  opacity: 0.8;
 }
 
 .reward-card.locked {
@@ -119,6 +113,18 @@
   margin-top: 4px;
 }
 
+.reward-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.redeemed-count {
+  font-size: 0.72rem;
+  color: #4caf50;
+  font-weight: 600;
+}
+
 .reward-cost {
   font-size: 0.82rem;
   font-weight: 700;
@@ -149,12 +155,6 @@
   background: rgba(255,255,255,0.1);
   color: rgba(255,255,255,0.4);
   cursor: not-allowed;
-}
-
-.redeemed-badge {
-  font-size: 0.78rem;
-  color: #4caf50;
-  font-weight: 700;
 }
 
 /* Achievements */
@@ -209,3 +209,79 @@
   color: #ffd700;
   flex-shrink: 0;
 }
+
+/* Reset section */
+.reset-section {
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.reset-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: transparent;
+  color: rgba(255,255,255,0.35);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reset-btn:hover {
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.55);
+}
+
+.reset-confirm {
+  background: rgba(255,59,59,0.1);
+  border: 1px solid rgba(255,59,59,0.3);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: center;
+}
+
+.reset-confirm p {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.75);
+  margin: 0;
+}
+
+.reset-confirm-btns {
+  display: flex;
+  gap: 10px;
+}
+
+.reset-confirm-yes {
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  background: #ff3b3b;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reset-confirm-yes:hover { background: #e02020; }
+
+.reset-confirm-no {
+  flex: 1;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reset-confirm-no:hover { background: rgba(255,255,255,0.08); }

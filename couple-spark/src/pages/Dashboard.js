@@ -1,13 +1,7 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { REWARDS, SIGNAL_LABELS } from '../constants';
 import './Dashboard.css';
-
-const REWARD_TIERS = [
-  { id: 'r1', label: '浪漫燭光晚餐 🕯️', cost: 50,  desc: '一起享用一頓安靜的燭光晚餐' },
-  { id: 'r2', label: '泡澡 SPA 之夜 🛁', cost: 100, desc: '為對方準備芳香泡澡，完全放鬆' },
-  { id: 'r3', label: '週末短旅行 🏖️',   cost: 200, desc: '計劃一次說走就走的兩人小旅行' },
-  { id: 'r4', label: '驚喜禮物 🎁',      cost: 80,  desc: '送給對方一份精心準備的驚喜' },
-];
 
 export default function Dashboard({ onNavigate }) {
   const { state, dispatch, ACHIEVEMENTS_DEF } = useApp();
@@ -19,12 +13,14 @@ export default function Dashboard({ onNavigate }) {
   const acceptedCount = signalHistory.filter((h) => h.status === 'accept').length;
   const today = new Date().toISOString().split('T')[0];
   const todayMood = moods[today]?.[activeUser];
+  const partnerKey = activeUser === 'partner1' ? 'partner2' : 'partner1';
+  const partnerMood = moods[today]?.[partnerKey];
 
   function handleMood(val) {
     dispatch({ type: 'RECORD_MOOD', mood: val });
   }
 
-  const nextReward = REWARD_TIERS.find((r) => !state.redeemedRewards.includes(r.id) && r.cost > points);
+  const nextReward = [...REWARDS].sort((a, b) => a.cost - b.cost).find((r) => r.cost > points);
   const progressToNext = nextReward ? Math.min((points / nextReward.cost) * 100, 100) : 100;
 
   return (
@@ -94,6 +90,17 @@ export default function Dashboard({ onNavigate }) {
             </button>
           ))}
         </div>
+        {partnerMood && (
+          <div className="partner-mood-row">
+            <span className="partner-mood-label">
+              {otherPartner.emoji} {otherPartner.name} 今天：
+            </span>
+            <span className="partner-mood-value">
+              {['😴', '😔', '😊', '😄', '🥰'][partnerMood - 1]}
+              <span className="partner-mood-text">{['很累', '普通', '還好', '不錯', '很好'][partnerMood - 1]}</span>
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Signal / Inbox buttons */}
@@ -157,11 +164,3 @@ export default function Dashboard({ onNavigate }) {
     </div>
   );
 }
-
-const SIGNAL_LABELS = {
-  tender:   '溫柔相擁',
-  romantic: '浪漫約會',
-  playful:  '輕鬆嬉戲',
-  intimate: '親密時光',
-  chat:     '悄悄話',
-};
